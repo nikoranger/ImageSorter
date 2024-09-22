@@ -39,7 +39,7 @@ namespace VM.Image
         /// <param name="path">文件路径</param>
         /// <returns>图片基本信息</returns>
         /// <exception cref="FileNotFoundException"></exception>
-        public static ImageInfo GetInfo(string path)
+        static ImageInfo GetInfo(string path)
         {
             ImageInfo info = new ImageInfo();
             if (File.Exists(path))
@@ -67,11 +67,29 @@ namespace VM.Image
         /// </summary>
         /// <param name="info">图片基本信息</param>
         /// <param name="targetFolder">目标文件夹</param>
-
         public static void CopyTo(ImageInfo info, string targetFolder)
         {
             var fullpath = Path.Combine(targetFolder, info.Name);
             File.Copy(info.Path, fullpath);
+        }
+
+        /// <summary>
+        /// 获取目录下所有的图片信息
+        /// </summary>
+        /// <param name="folder">目标文件夹</param>
+        /// <returns>图片文件</returns>
+        public static List<ImageInfo> GetInfos(string folder)
+        {
+            List<ImageInfo> infos = new List<ImageInfo>();
+            foreach (var filePath in Directory.GetFiles(folder))
+            {
+                infos.Add(GetInfo(filePath));
+            }
+            foreach (var dir in Directory.GetDirectories(folder))
+            {
+                infos.AddRange(GetInfos(dir));
+            }
+            return infos;
         }
     }
 }
